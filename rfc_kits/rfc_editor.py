@@ -42,20 +42,42 @@ class rfc_page(page):
 
 class rfc_text(rfc_page):
     def __init__(self, number: int):
-        file: str = f"rfc{number}.txt"
-        super().__init__(os.path.join("rfc", file))
+        self.__file: str = f"rfc{number}.txt"
+        super().__init__(os.path.join("rfc", self.file))
+
+    @property
+    def file(self) -> str:
+        return self.__file
 
 
 class rfc_html(rfc_page):
     def __init__(self, number: int):
-        file: str = f"rfc{number}.html"
-        super().__init__(os.path.join("rfc", file))
+        self.__file: str = f"rfc{number}.html"
+        self.__link: str = os.path.join("rfc", f"rfc{number}")
+        super().__init__(os.path.join("rfc", self.file))
+
+    @property
+    def file(self) -> str:
+        return self.__file
+
+    @property
+    def link(self) -> str:
+        return self.__link
+
+    def save(self):
+        super().save()
+        if not os.path.exists(self.link) or os.readlink(self.link) != self.file:  # noqa:E501
+            os.symlink(self.file, self.link)
 
 
 class rfc_pdf(rfc_page):
     def __init__(self, number: int):
-        file: str = os.path.join("pdfrfc", f"rfc{number}.txt.pdf")
-        super().__init__(file, os.path.join("rfc", file))
+        self.__file: str = os.path.join("pdfrfc", f"rfc{number}.txt.pdf")
+        super().__init__(self.file, os.path.join("rfc", self.file))
+
+    @property
+    def file(self) -> str:
+        return self.__file
 
 
 class rfc():

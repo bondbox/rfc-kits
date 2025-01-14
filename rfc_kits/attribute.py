@@ -3,7 +3,7 @@
 from urllib.parse import urljoin
 
 __project__ = "rfc-kits"
-__version__ = "0.1"
+__version__ = "0.1.1"
 __description__ = "Search, View and Download RFCs."
 __urlhome__ = "https://github.com/bondbox/rfc-kits"
 __urlcode__ = __urlhome__
