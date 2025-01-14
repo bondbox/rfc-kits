@@ -19,7 +19,7 @@ class rfc_page(page):
     def filepath(self) -> str:
         return self.__filepath
 
-    def save(self):
+    def save(self) -> bool:
         rewrite: bool = not os.path.isfile(self.filepath)
         dirname: str = os.path.dirname(self.filepath)
         if not os.path.exists(dirname):
@@ -28,7 +28,7 @@ class rfc_page(page):
         try:
             datas: bytes = super().fetch().content
         except HTTPError:
-            return
+            return False
 
         if not rewrite:
             with open(self.filepath, "rb") as rhdl:
@@ -38,6 +38,8 @@ class rfc_page(page):
         if rewrite:
             with open(self.filepath, "wb") as whdl:
                 whdl.write(datas)
+
+        return os.path.isfile(self.filepath)
 
 
 class rfc_text(rfc_page):
@@ -64,10 +66,14 @@ class rfc_html(rfc_page):
     def link(self) -> str:
         return self.__link
 
-    def save(self):
-        super().save()
+    def save(self) -> bool:
+        if not super().save():
+            return False
+
         if not os.path.exists(self.link) or os.readlink(self.link) != self.file:  # noqa:E501
             os.symlink(self.file, self.link)
+
+        return os.readlink(self.link) == self.file
 
 
 class rfc_pdf(rfc_page):
