@@ -37,6 +37,7 @@ def run_cmd_download(cmds: commands) -> int:
                 executor.submit(site.html.save)
             if all_rfcs or cmds.args.pdf:
                 executor.submit(site.pdfrfc.save)
+        executor.shutdown(wait=True)
     return 0
 
 
