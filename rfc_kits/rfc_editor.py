@@ -5,10 +5,10 @@ from typing import Optional
 from urllib.parse import urljoin
 
 from requests.exceptions import HTTPError
-from sitepages import page
+from xkits import Page
 
 
-class rfc_page(page):
+class RfcPage(Page):
     BASE: str = "https://www.rfc-editor.org"
 
     def __init__(self, location: str, filepath: Optional[str] = None):
@@ -26,7 +26,7 @@ class rfc_page(page):
             os.makedirs(dirname)
 
         try:
-            datas: bytes = super().fetch().content
+            datas: bytes = self.response.content
         except HTTPError:
             return False
 
@@ -42,7 +42,7 @@ class rfc_page(page):
         return os.path.isfile(self.filepath)
 
 
-class rfc_text(rfc_page):
+class RfcText(RfcPage):
     def __init__(self, number: int):
         self.__file: str = f"rfc{number}.txt"
         super().__init__(os.path.join("rfc", self.file))
@@ -52,7 +52,7 @@ class rfc_text(rfc_page):
         return self.__file
 
 
-class rfc_html(rfc_page):
+class RfcHtml(RfcPage):
     def __init__(self, number: int):
         self.__file: str = f"rfc{number}.html"
         self.__link: str = os.path.join("rfc", f"rfc{number}")
@@ -76,7 +76,7 @@ class rfc_html(rfc_page):
         return os.readlink(self.link) == self.file
 
 
-class rfc_pdf(rfc_page):
+class RfcPdf(RfcPage):
     def __init__(self, number: int):
         self.__file: str = os.path.join("pdfrfc", f"rfc{number}.txt.pdf")
         super().__init__(self.file, os.path.join("rfc", self.file))
@@ -86,7 +86,7 @@ class rfc_pdf(rfc_page):
         return self.__file
 
 
-class rfc():
+class RFC():
     def __init__(self, number: int):
         self.__number: int = number
 
@@ -95,13 +95,13 @@ class rfc():
         return self.__number
 
     @property
-    def text(self) -> rfc_text:
-        return rfc_text(self.number)
+    def text(self) -> RfcText:
+        return RfcText(self.number)
 
     @property
-    def html(self) -> rfc_html:
-        return rfc_html(self.number)
+    def html(self) -> RfcHtml:
+        return RfcHtml(self.number)
 
     @property
-    def pdfrfc(self) -> rfc_pdf:
-        return rfc_pdf(self.number)
+    def pdfrfc(self) -> RfcPdf:
+        return RfcPdf(self.number)

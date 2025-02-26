@@ -5,15 +5,15 @@ from typing import List
 from typing import Optional
 from typing import Sequence
 
-from xarg import add_command
-from xarg import argp
-from xarg import commands
-from xarg import run_command
+from xkits import add_command
+from xkits import argp
+from xkits import commands
+from xkits import run_command
 
 from .attribute import __description__
 from .attribute import __urlhome__
 from .attribute import __version__
-from .rfc_editor import rfc
+from .rfc_editor import RFC
 
 
 @add_command("rfc-download", help="Downlaod RFCs")
@@ -30,7 +30,7 @@ def run_cmd_rfc_download(cmds: commands) -> int:
     all_rfcs: bool = not (cmds.args.text or cmds.args.text or cmds.args.text)
     with ThreadPoolExecutor(max_workers=64) as executor:
         for number in rfc_nums:
-            site: rfc = rfc(number)
+            site: RFC = RFC(number)
             if all_rfcs or cmds.args.text:
                 executor.submit(site.text.save)
             if all_rfcs or cmds.args.html:
