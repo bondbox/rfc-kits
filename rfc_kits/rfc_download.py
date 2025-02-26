@@ -17,15 +17,15 @@ from .rfc_editor import rfc
 
 
 @add_command("rfc-download", help="Downlaod RFCs")
-def add_cmd_download(_arg: argp):
+def add_cmd_rfc_download(_arg: argp):
     _arg.add_argument("--text", action="store_true", help="Download text RFC")
     _arg.add_argument("--html", action="store_true", help="Download html RFC")
     _arg.add_argument("--pdf", action="store_true", help="Download pdf RFC")
     _arg.add_pos("rfc_number", type=int, nargs="+", metavar="RFC", help="number")  # noqa:E501
 
 
-@run_command(add_cmd_download)
-def run_cmd_download(cmds: commands) -> int:
+@run_command(add_cmd_rfc_download)
+def run_cmd_rfc_download(cmds: commands) -> int:
     rfc_nums: List[int] = cmds.args.rfc_number
     all_rfcs: bool = not (cmds.args.text or cmds.args.text or cmds.args.text)
     with ThreadPoolExecutor(max_workers=64) as executor:
@@ -41,11 +41,10 @@ def run_cmd_download(cmds: commands) -> int:
     return 0
 
 
-def download(argv: Optional[Sequence[str]] = None) -> int:
+def main(argv: Optional[Sequence[str]] = None) -> int:
     cmds = commands()
     cmds.version = __version__
-    return cmds.run(
-        root=add_cmd_download,
-        argv=argv,
-        description=__description__,
-        epilog=f"For more, please visit {__urlhome__}.")
+    return cmds.run(root=add_cmd_rfc_download,
+                    argv=argv,
+                    description=__description__,
+                    epilog=f"For more, please visit {__urlhome__}.")
