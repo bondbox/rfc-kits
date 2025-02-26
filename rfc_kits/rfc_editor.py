@@ -8,7 +8,7 @@ from requests.exceptions import HTTPError
 from xkits import Page
 
 
-class RfcPage(Page):
+class RfcEditorPage(Page):
     BASE: str = "https://www.rfc-editor.org"
 
     def __init__(self, location: str, filepath: Optional[str] = None):
@@ -42,7 +42,7 @@ class RfcPage(Page):
         return os.path.isfile(self.filepath)
 
 
-class RfcText(RfcPage):
+class RfcText(RfcEditorPage):
     def __init__(self, number: int):
         self.__file: str = f"rfc{number}.txt"
         super().__init__(os.path.join("rfc", self.file))
@@ -52,7 +52,7 @@ class RfcText(RfcPage):
         return self.__file
 
 
-class RfcHtml(RfcPage):
+class RfcHtml(RfcEditorPage):
     def __init__(self, number: int):
         self.__file: str = f"rfc{number}.html"
         self.__link: str = os.path.join("rfc", f"rfc{number}")
@@ -76,7 +76,7 @@ class RfcHtml(RfcPage):
         return os.readlink(self.link) == self.file
 
 
-class RfcPdf(RfcPage):
+class RfcPdf(RfcEditorPage):
     def __init__(self, number: int):
         self.__file: str = os.path.join("pdfrfc", f"rfc{number}.txt.pdf")
         super().__init__(self.file, os.path.join("rfc", self.file))
@@ -105,3 +105,26 @@ class RFC():
     @property
     def pdfrfc(self) -> RfcPdf:
         return RfcPdf(self.number)
+
+
+class BcpText(RfcEditorPage):
+    def __init__(self, number: int):
+        self.__file: str = os.path.join("bcp", f"bcp{number}.txt")
+        super().__init__(self.file, os.path.join("rfc", self.file))
+
+    @property
+    def file(self) -> str:
+        return self.__file
+
+
+class BCP():
+    def __init__(self, number: int):
+        self.__number: int = number
+
+    @property
+    def number(self) -> int:
+        return self.__number
+
+    @property
+    def text(self) -> BcpText:
+        return BcpText(self.number)
