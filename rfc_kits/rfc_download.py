@@ -27,7 +27,7 @@ def add_cmd_rfc_download(_arg: argp):
 @run_command(add_cmd_rfc_download)
 def run_cmd_rfc_download(cmds: commands) -> int:
     rfc_nums: List[int] = cmds.args.rfc_number
-    all_rfcs: bool = not (cmds.args.text or cmds.args.text or cmds.args.text)
+    all_rfcs: bool = not (cmds.args.text or cmds.args.html or cmds.args.pdf)
     with ThreadPoolExecutor(max_workers=64) as executor:
         for number in rfc_nums:
             site: RFC = RFC(number)
